@@ -1,20 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
 
-export default function App() {
+import Home from "./screens/Home";
+import Account from "./screens/Account";
+import SignIn from "./screens/SignIn";
+
+const Tab = createBottomTabNavigator();
+
+function MainApp() {
+  const { user } = useContext(AuthContext);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      {user ? (
+        <Tab.Navigator>
+          <Tab.Screen name="Explorer" component={Home} />
+          <Tab.Screen name="Account" component={Account} />
+        </Tab.Navigator>
+      ) : (
+        <SignIn />
+      )}
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
+  );
+}
